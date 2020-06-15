@@ -116,9 +116,7 @@ class Login extends React.Component {
       disabled: true,
       loader: true,
     });
-    console.log(email, password)
     const response = await loginUser({ variables: { email, password } });
-    console.log(response.data.loginUser)
     if (response.data.loginUser) {
       localStorage.setItem("token", response.data.loginUser);
       this.setState({
