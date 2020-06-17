@@ -82,7 +82,7 @@ function TableComponent(props) {
           </TableHead>
           <TableBody>
             {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .slice(0, rowsPerPage)
               .map((element) => (
                 <TableRow className={classes.cover} hover>
                   {column.map(({ field, align, format }) => (
@@ -108,7 +108,7 @@ function TableComponent(props) {
         </Table>
         <TablePagination
           className={classes.pages}
-          rowsPerPageOptions={[5, 10, 20,25]}
+          rowsPerPageOptions={[5, 10, 15, 20]}
           component='div'
           count={count}
           rowsPerPage={rowsPerPage}

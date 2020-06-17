@@ -8,7 +8,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { Link, BrowserRouter as Router } from 'react-router-dom';
 import { snackbarContext } from './../../contexts/index';
 import { Button } from '@material-ui/core';
-import callApi from '../../libs/utils/api';
+import Compose from 'lodash.flowright';
 import {
   AddDialog,
   WrapTable,
@@ -16,6 +16,8 @@ import {
   DeleteDialog,
 } from './Component/index';
 import { trainees, getDateFormatted } from './data/trainee';
+import { graphql } from '@apollo/react-hoc';
+import GET_TRAINEE from './query';
 
 const styles = (theme) => ({
   root: {
@@ -29,59 +31,56 @@ class TraineeList extends React.Component {
       open: false,
       EditOpen: false,
       RemoveOpen: false,
-      loader: false,
       orderBy: '',
       order: 'asc',
       traineedata: {},
-      data: [],
       editData: {},
       deleteData: {},
-      count: 100,
       page: 0,
-      rowsPerPage: 10,
+      rowsPerPage: 20,
     };
   }
 
-  componentDidMount() {
-    this.handleFetchData();
-  }
+  // componentDidMount() {
+  //   this.handleFetchData();
+  // }
 
-  async handleFetchData() {
-    const token = localStorage.getItem('token');
-    this.setState({
-      loader: true,
-    });
-    const response = await callApi(
-      'get',
-      '/trainee',
-      {
-        params: {
-          skip: 0,
-          limit: 1000,
-        },
-      },
-      {
-        headers: {
-          authorization: token,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    if (response.status === 'ok') {
-      this.setState({
-        data: response.data.records,
-        loader: false,
-        count: response.data.records.length,
-      });
-    } else {
-      const value = this.context;
-      value(response.message, 'error');
-      this.setState({
-        loader: false,
-      });
-    }
-  }
+  // async handleFetchData() {
+  //   const token = localStorage.getItem('token');
+  //   this.setState({
+  //     loader: true,
+  //   });
+  //   const response = await callApi(
+  //     'get',
+  //     '/trainee',
+  //     {
+  //       params: {
+  //         skip: 0,
+  //         limit: 1000,
+  //       },
+  //     },
+  //     {
+  //       headers: {
+  //         authorization: token,
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }
+  //   );
+  //   if (response.status === 'ok') {
+  //     this.setState({
+  //       data: response.data.records,
+  //       loader: false,
+  //       count: response.data.records.length,
+  //     });
+  //   } else {
+  //     const value = this.context;
+  //     value(response.message, 'error');
+  //     this.setState({
+  //       loader: false,
+  //     });
+  //   }
+  // }
   handleClickOpen = () => {
     this.setState({ open: true });
   };
@@ -104,16 +103,29 @@ class TraineeList extends React.Component {
     });
   };
 
-  handleChangePage = (event, newPage) => {
-    this.setState({
-      page: newPage,
-    });
+  handleChangePage = refetch => (event, newPage) => {
+    const { rowsPerPage } = this.state;
+    console.log(rowsPerPage)
+    this.setState(
+      {
+        page: newPage,
+      },
+      () =>
+        refetch({
+          skip: newPage * rowsPerPage,
+          limit: rowsPerPage,
+        })
+    );
   };
 
-  handleChangeRowsPerPage = (event) => {
-    this.setState({
+  handleChangeRowsPerPage = async(event) => {
+    const {page, rowsPerPage} = this.state;
+    console.log('page', page, 'rowperpage', rowsPerPage)
+    await this.setState({
       page: 0,
       rowsPerPage: event.target.value,
+    }, () => {
+      console.log('page', this.state.page, 'rowperpage', this.state.rowsPerPage)
     });
   };
 
@@ -131,7 +143,7 @@ class TraineeList extends React.Component {
   };
 
   handleRemove = () => {
-    this.handleFetchData();
+    // this.handleFetchData();
     const { count, rowsPerPage, page, data } = this.state;
     const mod = count % rowsPerPage;
     if (mod === 1 && data.length !== 1) {
@@ -161,7 +173,7 @@ class TraineeList extends React.Component {
   };
 
   handleEdit = (updatedData) => {
-    this.handleFetchData();
+    // this.handleFetchData();
     this.setState(
       {
         EditOpen: false,
@@ -174,7 +186,7 @@ class TraineeList extends React.Component {
   };
 
   onSubmit = (addData) => {
-    this.handleFetchData();
+    // this.handleFetchData();
     this.setState(
       {
         open: false,
@@ -192,16 +204,16 @@ class TraineeList extends React.Component {
       order,
       editData,
       deleteData,
-      data,
       page,
-      loader,
       rowsPerPage,
       EditOpen,
       RemoveOpen,
     } = this.state;
+    // const variables = { skip: rowsPerPage*page, limit: rowsPerPage };
     const {
       match: { url },
       classes,
+      data: { getTrainee: { records = [], count = 0 } = {}, refetch, loading },
     } = this.props;
     return (
       <>
@@ -232,9 +244,9 @@ class TraineeList extends React.Component {
           data={deleteData}
         />
         <WrapTable
-          loader={loader}
-          datalength={data.length}
-          data={data}
+          loader={loading}
+          datalength={records.length}
+          data={records}
           column={[
             {
               field: 'name',
@@ -266,10 +278,10 @@ class TraineeList extends React.Component {
           orderBy={orderBy}
           order={order}
           onSelect={this.handleSelect}
-          count={data.length}
+          count={count}
           page={page}
           rowsPerPage={rowsPerPage}
-          onChangePage={this.handleChangePage}
+          onChangePage={this.handleChangePage(refetch)}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         <Router>
@@ -288,6 +300,13 @@ class TraineeList extends React.Component {
 TraineeList.propTypes = {
   match: PropTypes.object.isRequired,
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
+  data: PropTypes.objectOf(PropTypes.object).isRequired,
 };
-export default withStyles(styles)(TraineeList);
+
+export default Compose (
+  withStyles(styles),
+  graphql(GET_TRAINEE, {
+    options: { variables: { skip: 0, limit: 20 } },
+  })
+)(TraineeList);
 TraineeList.contextType = snackbarContext;
