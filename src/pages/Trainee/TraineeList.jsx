@@ -118,15 +118,11 @@ class TraineeList extends React.Component {
     );
   };
 
-  handleChangeRowsPerPage = async(event) => {
-    const {page, rowsPerPage} = this.state;
-    console.log('page', page, 'rowperpage', rowsPerPage)
-    await this.setState({
+  handleChangeRowsPerPage = (event) => {
+    this.setState({
       page: 0,
       rowsPerPage: event.target.value,
-    }, () => {
-      console.log('page', this.state.page, 'rowperpage', this.state.rowsPerPage)
-    });
+    })
   };
 
   handleDeleteDialogOpen = (element) => (event) => {
