@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {withLoaderandMessage} from '../../../../components/index';
+import { withLoaderandMessage } from '../../../../components/index';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -81,18 +81,16 @@ function TableComponent(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
-            .slice(0, rowsPerPage)
-              .map((element) => (
-                <TableRow className={classes.cover} hover>
-                  {column.map(({ field, align, format }) => (
-                    <TableCell align={align} onClick={onSelect(element)}>
-                      {format !== undefined
-                        ? format(element[field])
-                        : element[field]}
-                    </TableCell>
-                  ))}
-                  <TableCell>
+            {data.map((element) => (
+              <TableRow className={classes.cover} hover>
+                {column.map(({ field, align, format }) => (
+                  <TableCell align={align} onClick={onSelect(element)}>
+                    {format !== undefined
+                      ? format(element[field])
+                      : element[field]}
+                  </TableCell>
+                ))}
+                <TableCell>
                   {actions.map(({ Icon, handler }) => (
                     <IconButton
                       onClick={handler(element)}
@@ -101,9 +99,9 @@ function TableComponent(props) {
                       {Icon}
                     </IconButton>
                   ))}
-                  </TableCell>
-                </TableRow>
-              ))}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <TablePagination
@@ -139,5 +137,5 @@ TableComponent.defaultProps = {
   order: 'asc',
   onSort: () => {},
 };
-const WrapTable = withLoaderandMessage(TableComponent)
+const WrapTable = withLoaderandMessage(TableComponent);
 export default withStyles(useStyles)(WrapTable);

@@ -14,7 +14,6 @@ import {
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { snackbarContext } from './../../../../contexts/snackbarProvider';
-import callApi from '../../../../libs/utils/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as yup from 'yup';
 import EmailIcon from '@material-ui/icons/Email';
@@ -156,30 +155,19 @@ class AddDialog extends React.Component {
   };
   onClickHandler = async (value) => {
     const { name, email, password } = this.state;
-    const token = localStorage.getItem('token');
-    const { onSubmit } = this.props;
+    const { onSubmit, createTrainee } = this.props;
     await this.setState({
       loader: true,
       disabled: true,
     });
-
-    const response = await callApi(
-      'post',
-      '/trainee',
-      { data: { name, email, password } },
-      {
-        headers: {
-          authorization: token,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    if (response.status === 'ok') {
+    const response = await createTrainee({
+      variables: { name, email, password },
+    });
+    if (response.data.createTrainee) {
       onSubmit({ name, email, password });
-      value(response.message, 'success');
+      value('Trainee Added Successfully', 'success');
     } else {
-      value(response.message, 'error');
+      value('Trainee Added Unsuccessfully', 'error');
     }
 
     this.setState({
