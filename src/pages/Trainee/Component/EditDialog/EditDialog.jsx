@@ -3,7 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { snackbarContext } from './../../../../contexts/snackbarProvider';
-import callApi from '../../../../libs/utils/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as yup from 'yup';
 import {
@@ -110,35 +109,23 @@ class EditDialog extends React.Component {
     }
   };
   onClickHandler = async (value) => {
-    const { name, email, password } = this.state;
-    const token = localStorage.getItem('token');
-    const { handleEdit, data, handleEditClose } = this.props;
-    const { originalId: editId } = data;
+    const { name, email } = this.state;
+    const { handleEdit, data, handleEditClose, updateTrainee } = this.props;
+    const { originalId: id } = data;
     await this.setState({
       loader: true,
       disabled: true,
     });
-    const response = await callApi(
-      'put',
-      '/trainee',
-      { data: { name, email, password, id: editId } },
-      {
-        headers: {
-          authorization: token,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    if (response.status === 'ok') {
+    const response = await updateTrainee({ variables: { id, name, email } });
+    if (response.data.updateTrainee) {
       handleEdit({
         name,
         email,
       });
-      value(response.message, 'success');
+      value('Trainee Updated Successfully', 'success');
       handleEditClose();
     } else {
-      value(response.message, 'error');
+      value('Trainee UPdated Unsuccessfully', 'error');
     }
 
     this.setState({

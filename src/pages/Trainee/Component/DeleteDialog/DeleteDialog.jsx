@@ -2,7 +2,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import PropTypes from 'prop-types';
-import callApi from '../../../../libs/utils/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { snackbarContext } from './../../../../contexts/snackbarProvider';
 import {
@@ -23,30 +22,18 @@ class DeleteDialog extends React.Component {
     };
   }
   onClickHandler = async (value) => {
-    const token = localStorage.getItem('token');
-    const { remove, data } = this.props;
-    const { originalId: deleteId } = data;
+    const { remove, data, deleteTrainee } = this.props;
+    const { originalId: id } = data;
     await this.setState({
       loader: true,
       disabled: true,
     });
-    const response = await callApi(
-      'delete',
-      `/trainee/${deleteId}`,
-      {},
-      {
-        headers: {
-          authorization: token,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    if (response.status === 'ok') {
+    const response = await deleteTrainee({ variables: { id } });
+    if (response.data.deleteTrainee) {
       remove();
-      value(response.message, 'success');
+      value('Trainee Deleted Successfully', 'success');
     } else {
-      value(response.message, 'error');
+      value('Trainee Deleted Unsuccessfully', 'error');
     }
 
     this.setState({
