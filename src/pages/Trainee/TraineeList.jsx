@@ -66,7 +66,6 @@ class TraineeList extends React.Component {
 
   handleChangePage = (refetch) => (event, newPage) => {
     const { rowsPerPage } = this.state;
-    console.log(rowsPerPage);
     this.setState(
       {
         page: newPage,
@@ -111,21 +110,15 @@ class TraineeList extends React.Component {
     const {
       data: { getTrainee: { count = 0 } = {}, refetch },
     } = this.props;
-    const mod = count % rowsPerPage;
-    console.log(mod);
     if (count - page * rowsPerPage === 1 && page > 0) {
       this.setState({
         page: page - 1,
       });
       refetch({ skip: (page - 1) * rowsPerPage, limit: rowsPerPage });
     }
-
-    const { deleteData } = this.state;
     this.setState({
       RemoveOpen: false,
     });
-    console.log('DELETE ITEM');
-    console.log(deleteData);
   };
 
   handleEditDialogOpen = (element) => (event) => {
@@ -145,10 +138,6 @@ class TraineeList extends React.Component {
     this.setState(
       {
         EditOpen: false,
-      },
-      () => {
-        console.log('Edit Data');
-        console.log(updatedData);
       }
     );
   };
@@ -157,9 +146,6 @@ class TraineeList extends React.Component {
     this.setState(
       {
         open: false,
-      },
-      () => {
-        console.log(addData);
       }
     );
   };
