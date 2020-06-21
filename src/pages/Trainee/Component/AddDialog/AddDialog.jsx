@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable react/destructuring-assignment */
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   TextField,
   Dialog,
@@ -11,55 +11,55 @@ import {
   DialogTitle,
   Button,
   InputAdornment,
-} from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { snackbarContext } from "./../../../../contexts/snackbarProvider";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import * as yup from "yup";
-import EmailIcon from "@material-ui/icons/Email";
-import PersonIcon from "@material-ui/icons/Person";
-import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { snackbarContext } from './../../../../contexts/snackbarProvider';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import * as yup from 'yup';
+import EmailIcon from '@material-ui/icons/Email';
+import PersonIcon from '@material-ui/icons/Person';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 const styling = () => ({
   Content: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
   },
   Text: {
     margin: 15,
   },
   PasswordText: {
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
   },
   Demo: {
-    flex: "1",
+    flex: '1',
   },
 });
 class AddDialog extends React.Component {
   schema = yup.object().shape({
-    name: yup.string().required("Name is required").min(3),
-    email: yup.string().email().required("Email is required"),
+    name: yup.string().required('Name is required').min(3),
+    email: yup.string().email().required('Email is required'),
     password: yup
       .string()
-      .required("password is required")
+      .required('password is required')
       .matches(
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-        "must contain 8 characters at least one \n uppercase one lowercase and one number"
+        'must contain 8 characters at least one \n uppercase one lowercase and one number'
       ),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match")
-      .required("password is required"),
+      .oneOf([yup.ref('password'), null], 'Passwords must match')
+      .required('password is required'),
   });
 
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       loader: false,
       disabled: true,
       touched: {
@@ -69,10 +69,10 @@ class AddDialog extends React.Component {
         confirmPassword: false,
       },
       error: {
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
       },
     };
   }
@@ -88,12 +88,12 @@ class AddDialog extends React.Component {
       this.schema
         .validateAt(field, this.state)
         .then(() => {
-          if (error[field] !== "") {
+          if (error[field] !== '') {
             this.setState(
               {
                 error: {
                   ...error,
-                  [field]: "",
+                  [field]: '',
                 },
               },
               () => {
@@ -140,9 +140,9 @@ class AddDialog extends React.Component {
     const { error, touched } = this.state;
     let alltouched = Object.values(touched);
     let iserror = Object.values(error);
-    iserror = iserror.filter((errorMessage) => errorMessage !== "");
+    iserror = iserror.filter((errorMessage) => errorMessage !== '');
     alltouched = alltouched.every((value) => value);
-    iserror = iserror.every((value) => value === "");
+    iserror = iserror.every((value) => value === '');
     if (iserror && alltouched) {
       this.setState({
         disabled: false,
@@ -165,10 +165,10 @@ class AddDialog extends React.Component {
     })
       .then(() => {
         onSubmit({ name, email, password });
-        value("Trainee created successfully", "success");
+        value('Trainee created successfully', 'success');
       })
       .catch((err) => {
-        value(err.message, "error");
+        value(err.message, 'error');
       })
       .finally(() => {
         this.setState({ loader: false, disabled: false });
@@ -184,9 +184,9 @@ class AddDialog extends React.Component {
         <Dialog
           open={open}
           onClose={onClose}
-          aria-labelledby="form-dialog-title"
+          aria-labelledby='form-dialog-title'
         >
-          <DialogTitle id="form-dialog-title">Add Trainee</DialogTitle>
+          <DialogTitle id='form-dialog-title'>Add Trainee</DialogTitle>
           <DialogContent>
             <DialogContentText className={classes.Content}>
               Enter your trainee details
@@ -194,18 +194,18 @@ class AddDialog extends React.Component {
             <TextField
               autoFocus
               error={!!error.name}
-              id="name"
-              label="Name*"
-              type="name"
-              variant="outlined"
+              id='name'
+              label='Name*'
+              type='name'
+              variant='outlined'
               className={classes.text}
-              helperText={this.getError("name")}
-              onChange={this.handleChange("name")}
-              onBlur={() => this.isTouched("name")}
+              helperText={this.getError('name')}
+              onChange={this.handleChange('name')}
+              onBlur={() => this.isTouched('name')}
               fullWidth
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">
+                  <InputAdornment position='start'>
                     <PersonIcon />
                   </InputAdornment>
                 ),
@@ -214,18 +214,18 @@ class AddDialog extends React.Component {
             <br />
             <br />
             <TextField
-              id="email"
+              id='email'
               error={!!error.email}
-              label="EmailAddress"
-              type="email"
-              variant="outlined"
+              label='EmailAddress'
+              type='email'
+              variant='outlined'
               className={classes.text}
-              onChange={this.handleChange("email")}
-              helperText={this.getError("email")}
-              onBlur={() => this.isTouched("email")}
+              onChange={this.handleChange('email')}
+              helperText={this.getError('email')}
+              onBlur={() => this.isTouched('email')}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">
+                  <InputAdornment position='start'>
                     <EmailIcon />
                   </InputAdornment>
                 ),
@@ -237,18 +237,18 @@ class AddDialog extends React.Component {
             <div className={classes.PasswordText}>
               <div className={classes.Demo}>
                 <TextField
-                  id="password"
+                  id='password'
                   error={!!error.password}
-                  label="password"
-                  type="password"
-                  variant="outlined"
+                  label='password'
+                  type='password'
+                  variant='outlined'
                   className={classes.text}
-                  onChange={this.handleChange("password")}
-                  helperText={this.getError("password")}
-                  onBlur={() => this.isTouched("password")}
+                  onChange={this.handleChange('password')}
+                  helperText={this.getError('password')}
+                  onBlur={() => this.isTouched('password')}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">
+                      <InputAdornment position='start'>
                         <VisibilityOffIcon />
                       </InputAdornment>
                     ),
@@ -258,18 +258,18 @@ class AddDialog extends React.Component {
               &nbsp; &nbsp;
               <div className={classes.Demo}>
                 <TextField
-                  id="confirm-password"
+                  id='confirm-password'
                   error={!!error.confirmPassword}
-                  label="Confirm-password"
-                  type="password"
-                  variant="outlined"
+                  label='Confirm-password'
+                  type='password'
+                  variant='outlined'
                   className={classes.text}
-                  onBlur={() => this.isTouched("confirmPassword")}
-                  helperText={this.getError("confirmPassword")}
-                  onChange={this.handleChange("confirmPassword")}
+                  onBlur={() => this.isTouched('confirmPassword')}
+                  helperText={this.getError('confirmPassword')}
+                  onChange={this.handleChange('confirmPassword')}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">
+                      <InputAdornment position='start'>
                         <VisibilityOffIcon />
                       </InputAdornment>
                     ),
@@ -279,18 +279,18 @@ class AddDialog extends React.Component {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={onClose} color="primary">
+            <Button onClick={onClose} color='primary'>
               Cancel
             </Button>
             <snackbarContext.Consumer>
               {(value) => (
                 <Button
                   onClick={() => this.onClickHandler(value)}
-                  color="primary"
-                  variant="contained"
+                  color='primary'
+                  variant='contained'
                   disabled={disabled}
                 >
-                  <span>{loader ? <CircularProgress size={20} /> : ""}</span>
+                  <span>{loader ? <CircularProgress size={20} /> : ''}</span>
                   Submit
                 </Button>
               )}
