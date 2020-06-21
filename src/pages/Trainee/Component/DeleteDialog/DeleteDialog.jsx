@@ -28,18 +28,20 @@ class DeleteDialog extends React.Component {
       loader: true,
       disabled: true,
     });
-    const response = await deleteTrainee({ variables: { id } });
-    if (response.data.deleteTrainee) {
-      remove();
-      value('Trainee Deleted Successfully', 'success');
-    } else {
-      value('Trainee Deleted Unsuccessfully', 'error');
-    }
-
-    this.setState({
-      loader: false,
-      disabled: false,
-    });
+   deleteTrainee({ variables: { id } })
+      .then(() => {
+        remove();
+        value('Trainee Deleted Successfully', 'success');
+      })
+      .catch((err) => {
+        value(err.message, 'error');
+      })
+      .finally(() => {
+        this.setState({
+          disabled: false,
+          loader: false,
+        });
+      });
   };
   render() {
     const { openRemove, onClose } = this.props;

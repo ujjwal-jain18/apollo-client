@@ -116,22 +116,24 @@ class EditDialog extends React.Component {
       loader: true,
       disabled: true,
     });
-    const response = await updateTrainee({ variables: { id, name, email } });
-    if (response.data.updateTrainee) {
-      handleEdit({
-        name,
-        email,
+    await updateTrainee({ variables: { id, name, email } })
+      .then(() => {
+        handleEdit({
+          name,
+          email,
+        });
+        value('This is success message', 'success');
+        handleEditClose();
+      })
+      .catch((err) => {
+        value(err.message, 'error');
+      })
+      .finally(() => {
+        this.setState({
+          disabled: false,
+          loader: false,
+        });
       });
-      value('Trainee Updated Successfully', 'success');
-      handleEditClose();
-    } else {
-      value('Trainee UPdated Unsuccessfully', 'error');
-    }
-
-    this.setState({
-      loader: false,
-      disabled: false,
-    });
   };
 
   render() {

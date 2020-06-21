@@ -27,6 +27,10 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "styled-components": "^5.0.1",
+    "subscriptions-transport-ws": "^0.9.16",
+    "apollo-link-ws": "^1.0.20",
+    "apollo-utilities": "^1.3.4",
+    "apollo-link": "^1.2.14",
     "yup": "^0.28.3"
   },
   "scripts": {
