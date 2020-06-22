@@ -40,7 +40,7 @@ class TraineeList extends React.Component {
       editData: {},
       deleteData: {},
       page: 0,
-      rowsPerPage: 395,
+      rowsPerPage: 20
     };
   }
 
@@ -338,7 +338,7 @@ TraineeList.propTypes = {
 export default Compose(
   withStyles(styles),
   graphql(GET_TRAINEE, {
-    options: { variables: { skip: 0, limit: 500 } },
+    options: { variables: { skip: 0, limit: 20 } },
   })
 )(TraineeList);
 TraineeList.contextType = snackbarContext;
