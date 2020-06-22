@@ -160,20 +160,19 @@ class AddDialog extends React.Component {
       loader: true,
       disabled: true,
     });
-    const response = await createTrainee({
+    await createTrainee({
       variables: { name, email, password },
-    });
-    if (response.data.createTrainee) {
-      onSubmit({ name, email, password });
-      value('Trainee Added Successfully', 'success');
-    } else {
-      value('Trainee Added Unsuccessfully', 'error');
-    }
-
-    this.setState({
-      loader: false,
-      disabled: false,
-    });
+    })
+      .then(() => {
+        onSubmit({ name, email, password });
+        value('Trainee created successfully', 'success');
+      })
+      .catch((err) => {
+        value(err.message, 'error');
+      })
+      .finally(() => {
+        this.setState({ loader: false, disabled: false });
+      });
   };
 
   render() {

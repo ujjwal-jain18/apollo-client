@@ -20,6 +20,7 @@ import { CREATE_TRAINEE, UPDATE_TRAINEE, DELETE_TRAINEE } from './mutation';
 import { trainees, getDateFormatted } from './data/trainee';
 import { graphql } from '@apollo/react-hoc';
 import GET_TRAINEE from './query';
+import { UPDATE_TRAINEE_SUB, DELETE_TRAINEE_SUB } from './subscription';
 
 const styles = (theme) => ({
   root: {
@@ -39,9 +40,67 @@ class TraineeList extends React.Component {
       editData: {},
       deleteData: {},
       page: 0,
-      rowsPerPage: 20,
+      rowsPerPage: 20
     };
   }
+
+  componentDidMount() {
+    const {
+      data: { subscribeToMore },
+    } = this.props;
+    subscribeToMore({
+      document: UPDATE_TRAINEE_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+        const {
+          getTrainee: { records },
+        } = prev;
+        const {
+          data: { traineeUpdated},
+        } = subscriptionData;
+        const updateRecords = [...records].map((record) => {
+          if (record.originalId === traineeUpdated.id) {
+            return {
+              ...record,
+              ...traineeUpdated,
+            };
+          }
+          return record;
+        });
+        return {
+          getTrainee: {
+            ...prev.getTrainee,
+            count: prev.getTrainee.count,
+            records: updateRecords,
+          },
+        };
+      },
+    });
+
+    subscribeToMore({
+      document: DELETE_TRAINEE_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData) return prev;
+        const {
+          getTrainee: { records, count },
+        } = prev;
+        const {
+          data: { traineeDeleted },
+        } = subscriptionData;
+        const updateRecords = [...records].filter(
+          (record) => traineeDeleted !== record.originalId
+        );
+        return {
+          getTrainee: {
+            ...prev.getTrainee,
+            count: count - 1,
+            records: updateRecords,
+          },
+        };
+      },
+    });
+  }
+
   handleClickOpen = () => {
     this.setState({ open: true });
   };
@@ -135,19 +194,15 @@ class TraineeList extends React.Component {
   };
 
   handleEdit = (updatedData) => {
-    this.setState(
-      {
-        EditOpen: false,
-      }
-    );
+    this.setState({
+      EditOpen: false,
+    });
   };
 
   onSubmit = (addData) => {
-    this.setState(
-      {
-        open: false,
-      }
-    );
+    this.setState({
+      open: false,
+    });
   };
 
   render() {
@@ -171,7 +226,6 @@ class TraineeList extends React.Component {
     return (
       <Mutation
         mutation={DELETE_TRAINEE}
-        refetchQueries={[{ query: GET_TRAINEE, variables }]}
       >
         {(deleteTrainee) => (
           <Mutation
@@ -181,7 +235,6 @@ class TraineeList extends React.Component {
             {(createTrainee) => (
               <Mutation
                 mutation={UPDATE_TRAINEE}
-                refetchQueries={[{ query: GET_TRAINEE, variables }]}
               >
                 {(updateTrainee) => (
                   <>

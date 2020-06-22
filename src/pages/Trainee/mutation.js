@@ -14,6 +14,8 @@ const UPDATE_TRAINEE = gql`
   mutation updateTrainee($id: ID!, $name: String, $email: String) {
     updateTrainee(payload: { id: $id, name: $name, email: $email }) {
       id
+      name
+      email
     }
   }
 `;
