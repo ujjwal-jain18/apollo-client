@@ -40,7 +40,7 @@ class TraineeList extends React.Component {
       editData: {},
       deleteData: {},
       page: 0,
-      rowsPerPage: 20
+      rowsPerPage: 20,
     };
   }
 
@@ -169,11 +169,13 @@ class TraineeList extends React.Component {
     const {
       data: { getTrainee: { count = 0 } = {}, refetch },
     } = this.props;
-    if (count - page * rowsPerPage === 1 && page > 0) {
+    if (count - page * rowsPerPage === 0 && page > 0) {
       this.setState({
-        page: page - 1,
+        page: page -1,
+      }, () => {
+        const {page,rowsPerPage} = this.state;
+        refetch({ skip: (page) * rowsPerPage, limit: rowsPerPage });
       });
-      refetch({ skip: (page - 1) * rowsPerPage, limit: rowsPerPage });
     }
     this.setState({
       RemoveOpen: false,
